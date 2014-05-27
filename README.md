@@ -1,4 +1,4 @@
 population
 ==========
 
-Gene algorithm with Scala and Akka
+Genetic algorithm with Scala and Akka

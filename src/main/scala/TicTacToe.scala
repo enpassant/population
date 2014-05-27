@@ -237,11 +237,6 @@ object TicTacToe extends Population {
       }).toMap
       reducedMoves.append(legalMoves.toList.map(entry => entry._2))
     })
-
-//    println(reducedTables.length)
-//    reducedMoves.foreach( println )
-    
-    evaluate(createChromosoma(reducedTables.size))
   }
 
   init

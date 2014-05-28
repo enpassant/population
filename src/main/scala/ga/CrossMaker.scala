@@ -3,11 +3,12 @@
  */
 
 
-import scala.util.Random
+package ga
 
 import akka.actor.Actor
 import akka.actor.Props
 import akka.actor.actorRef2Scala
+import scala.util.Random
 
 /**
  * @author kalman

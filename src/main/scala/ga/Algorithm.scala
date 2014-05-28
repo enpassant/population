@@ -1,6 +1,8 @@
 /**
  *
  */
+package ga
+
 import scala.util.Random
 
 import akka.actor.Actor

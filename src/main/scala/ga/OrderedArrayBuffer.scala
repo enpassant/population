@@ -1,6 +1,8 @@
 /**
  *
  */
+package ga
+
 import scala.collection.mutable.ArrayBuffer
 
 /**

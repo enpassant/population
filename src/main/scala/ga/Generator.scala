@@ -1,10 +1,12 @@
 /**
  *
  */
-import akka.actor.Actor
+package ga
+
 import scala.util.Random
-import akka.actor.Props
-import akka.routing.FromConfig
+
+import akka.actor.Actor
+import akka.actor.actorRef2Scala
 
 /**
  * @author kalman

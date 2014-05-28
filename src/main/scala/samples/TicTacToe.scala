@@ -1,9 +1,14 @@
 /**
  *
  */
+package samples
+
 import scala.util.Random
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Map
+import ga.Population
+import ga.Chromosoma
+import scala.math.BigInt.int2bigInt
 
 /**
  * @author kalman

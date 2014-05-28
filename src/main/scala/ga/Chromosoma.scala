@@ -1,4 +1,4 @@
-import scala.util.Random
+package ga
 
 class Chromosoma(val length: Int) extends Ordered[Chromosoma] {
   val genome = new Array[Int](length)

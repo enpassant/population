@@ -5,7 +5,11 @@
  * @author kalman
  *
  */
+package ga
+
 import scala.util.Random
+import ga.Chromosoma
+import ga.OrderedArrayBuffer
 
 abstract class Population {
   var chromosomas = new OrderedArrayBuffer[Chromosoma]

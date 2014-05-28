@@ -1,7 +1,10 @@
-import scala.util.Random
+package main
 
 import akka.actor.ActorSystem
 import akka.actor.Props
+import ga.Algorithm
+import ga.Chromosoma
+import samples.TicTacToe
 
 object Popu extends App {
 

@@ -2,7 +2,12 @@
  *
  */
 
+package samples
+
 import scala.util.Random
+
+import ga.Chromosoma
+import ga.Population
 
 /**
  * @author kalman

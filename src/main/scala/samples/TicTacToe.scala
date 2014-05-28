@@ -38,8 +38,8 @@ object TicTacToe extends Population {
   def string2Table(tableStr: String) = BigInt(tableStr, 3)
 
   def move(strTable: String, moveChar: Char, index: Int) = {
+    val charArray = strTable.toCharArray
     var pos = index
-    var charArray = strTable.toCharArray
     for (i <- 0 until charArray.length) {
       if (pos >= 0) {
         if (charArray(i) == '0') {
@@ -69,48 +69,47 @@ object TicTacToe extends Population {
   def moveToPos(tableIndex: BigInt, step: Int, pos: Int, show: Boolean): (BigInt, (Int, Int, Int)) = {
     val moveChar = ("" + (step % 2 + 1))(0)
 
-    var table = tableIndex
-
-    var transformIndex = 0
-
-    if (mapTableToReduced.contains(table.intValue)) {
-      val reduced = mapTableToReduced(table.intValue)
-      transformIndex = reducedTables(reduced).indexOf(table.intValue)
-      table = (getReduced(reducedTables(reduced)))
+    val (table, transformIndex) = if (mapTableToReduced.contains(tableIndex.intValue)) {
+      val reducedIndex = mapTableToReduced(tableIndex.intValue)
+      val reduced = reducedTables(reducedIndex)
+      
+      (BigInt( getReduced(reduced) ), 
+          reduced.indexOf(tableIndex.intValue)) 
+    } else {
+      (tableIndex, 0)
     }
     val strTable = table2String(table)
 
     val strArr = move(strTable, moveChar, pos)
-    table = string2Table(transform(strArr, transformIndex))
+    val newTable = string2Table(transform(strArr, transformIndex))
 
     if (isWin(strArr.toCharArray(), moveChar)) {
-      if (step % 2 == 0) (table, (0, 0, 1)) else (table, (1, 0, 0))
-    } else (table, (0, 1, 0))
+      if (step % 2 == 0) (newTable, (0, 0, 1)) else (newTable, (1, 0, 0))
+    } else (newTable, (0, 1, 0))
   }
 
   def moveChromosoma(tableIndex: BigInt, step: Int, chrom: Chromosoma, show: Boolean): (BigInt, (Int, Int, Int)) = {
     val moveChar = ("" + (step % 2 + 1))(0)
 
-    var table = tableIndex
-
-    var transformIndex = 0
-    var pos = 0
-
-    if (mapTableToReduced.contains(table.intValue)) {
-      val reduced = mapTableToReduced(table.intValue)
-      transformIndex = reducedTables(reduced).indexOf(table.intValue)
-      pos = chrom.genome(reduced)
-      table = (getReduced(reducedTables(reduced)))
-      pos = reducedMoves(reduced)(pos)
+    val (table, transformIndex, pos) = if (mapTableToReduced.contains(tableIndex.intValue)) {
+      val reducedIndex = mapTableToReduced(tableIndex.intValue)
+      val reduced = reducedTables(reducedIndex)
+      val genome = chrom.genome(reducedIndex)
+      
+      (BigInt( getReduced(reduced) ), 
+          reduced.indexOf(tableIndex.intValue), 
+          reducedMoves(reducedIndex)(genome))
+    } else {
+      (tableIndex, 0, 0)
     }
     val strTable = table2String(table)
 
     val strArr = move(strTable, moveChar, pos)
-    table = string2Table(transform(strArr, transformIndex))
+    val newTable = string2Table(transform(strArr, transformIndex))
 
     if (isWin(strArr.toCharArray(), moveChar)) {
-      if (step % 2 == 0) (table, (0, 0, 1)) else (table, (1, 0, 0))
-    } else (table, (0, 1, 0))
+      if (step % 2 == 0) (newTable, (0, 0, 1)) else (newTable, (1, 0, 0))
+    } else (newTable, (0, 1, 0))
   }
 
   def evaluate(chromosoma: Chromosoma) = {

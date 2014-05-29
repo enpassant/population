@@ -14,7 +14,7 @@ import akka.actor.actorRef2Scala
  */
 class Generator(val population: Population) extends Actor {
 
-  val collector = context.actorFor("/user/population/collector")
+  val collector = context.actorFor("../../collector")
 
   val random = new Random
   

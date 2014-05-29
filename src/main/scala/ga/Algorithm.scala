@@ -4,11 +4,11 @@
 package ga
 
 import scala.util.Random
-
 import akka.actor.Actor
 import akka.actor.Props
 import akka.actor.actorRef2Scala
 import akka.routing.FromConfig
+import akka.actor.ActorSystem
 
 case class Generate(length: Int)
 case class Cross(chr1: Chromosoma, chr2: Chromosoma)
@@ -68,6 +68,6 @@ class Algorithm(val size: Int, val length: Int, val count: Int, val population: 
 
     case Exit =>
       population.show(population.best)
-      context.system.shutdown
+      context.stop(self)
   }
 }

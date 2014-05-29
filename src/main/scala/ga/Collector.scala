@@ -14,7 +14,7 @@ class Collector(val size: Int) extends Actor {
 
   var chromosomas: OrderedArrayBuffer[Chromosoma] = null
 
-  val algorithm = context.actorFor("/user/population")
+  val algorithm = context.actorFor("..")
   
   def receive = {
 

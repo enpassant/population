@@ -37,18 +37,20 @@ object TicTacToe extends Population {
 
   def string2Table(tableStr: String) = BigInt(tableStr, 3)
 
-  def move(strTable: String, moveChar: Char, index: Int) = {
+  def move(strTable: String, moveChar: Char, index: Int): String = {
     val charArray = strTable.toCharArray
-    var pos = index
-    for (i <- 0 until charArray.length) {
-      if (pos >= 0) {
-        if (charArray(i) == '0') {
-          if (pos == 0) charArray(i) = moveChar
-          pos -= 1
-        }
-      }
+
+    @annotation.tailrec
+    def loop(index: Int, pos: Int): String = {
+      if (charArray(pos) == '0') {
+        if (index == 0) {
+          charArray(pos) = moveChar
+          String.valueOf(charArray)
+        } else loop(index - 1, pos + 1)
+      } else loop(index, pos + 1)
     }
-    String.valueOf(charArray)
+    
+    loop(index, 0)
   }
 
   def reducedMove(strTable: String, moveChar: Char, index: Int) = {

@@ -15,7 +15,7 @@ import scala.math.BigInt.int2bigInt
  *
  */
 object TicTacToe extends Population {
-  
+
   override def generateRandomGenome(index: Int, random: Random) = {
     random.nextInt(reducedMoves(index).length)
   }
@@ -49,7 +49,7 @@ object TicTacToe extends Population {
         } else loop(index - 1, pos + 1)
       } else loop(index, pos + 1)
     }
-    
+
     loop(index, 0)
   }
 
@@ -58,7 +58,7 @@ object TicTacToe extends Population {
     charArray(index) = moveChar
     String.valueOf(charArray)
   }
-  
+
   def showTable(table: Int) = {
     val strArr = table2String(table)
     val strTable = strArr.replace('0', ' ').replace('1', 'O').replace('2', 'X')
@@ -74,9 +74,9 @@ object TicTacToe extends Population {
     val (table, transformIndex) = if (mapTableToReduced.contains(tableIndex.intValue)) {
       val reducedIndex = mapTableToReduced(tableIndex.intValue)
       val reduced = reducedTables(reducedIndex)
-      
-      (BigInt( getReduced(reduced) ), 
-          reduced.indexOf(tableIndex.intValue)) 
+
+      (BigInt( getReduced(reduced) ),
+          reduced.indexOf(tableIndex.intValue))
     } else {
       (tableIndex, 0)
     }
@@ -97,9 +97,9 @@ object TicTacToe extends Population {
       val reducedIndex = mapTableToReduced(tableIndex.intValue)
       val reduced = reducedTables(reducedIndex)
       val genome = chrom.genome(reducedIndex)
-      
-      (BigInt( getReduced(reduced) ), 
-          reduced.indexOf(tableIndex.intValue), 
+
+      (BigInt( getReduced(reduced) ),
+          reduced.indexOf(tableIndex.intValue),
           reducedMoves(reducedIndex)(genome))
     } else {
       (tableIndex, 0, 0)
@@ -122,14 +122,14 @@ object TicTacToe extends Population {
       } else {
         val (tableIndex, (win, draw, lost)) = if (move >= 0) {
 	      val (tableIndex, (win, draw, lost)) = moveToPos(table, step, move, false)
-	      
-	      if (player == 1) (tableIndex, (win, draw, lost)) 
-	      else (tableIndex, (lost, draw, win)) 
+
+	      if (player == 1) (tableIndex, (win, draw, lost))
+	      else (tableIndex, (lost, draw, win))
         } else if (step % 2 == player) {
           val (tableIndex, (win, draw, lost)) = moveChromosoma(table, step, chromosoma, false)
-	      
-          if (player == 1) (tableIndex, (win, draw, lost)) 
-	      else (tableIndex, (lost, draw, win)) 
+
+          if (player == 1) (tableIndex, (win, draw, lost))
+	      else (tableIndex, (lost, draw, win))
         } else {
           if (mapTableToReduced.contains(table.intValue)) {
             val reducedIndex = mapTableToReduced(table.intValue)
@@ -148,14 +148,14 @@ object TicTacToe extends Population {
         }
       }
     }
-    
+
     val result1 = loop(BigInt(0), 1, 1, -1, (0, 0, 0))
     val result2 = loop(BigInt(0), 1, 0, -1, (0, 0, 0))
     chromosoma.fitness = ((result1._1 + result2._1) * 100.0 + (result1._2 + result2._2) * 100.0 + (result1._3 + result2._3) * 0) /
     	(result1._1 + result2._1 + result1._2 + result2._2 + result1._3 + result2._3)
-    
+
     chromosoma.user = (result1._1 + result2._1, result1._2 + result2._2, result1._3 + result2._3)
-    
+
     chromosoma
   }
 
@@ -163,7 +163,7 @@ object TicTacToe extends Population {
     case (win, draw, lost) => lost == 0
     case _ => false
   }
-    
+
   override def show(chromosoma: Chromosoma) = {
     println(step + ". " + chromosoma.fitness + ", " + chromosomas.last.fitness + " [" + chromosoma.user + "]")
   }

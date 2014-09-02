@@ -8,8 +8,6 @@
 package ga
 
 import scala.util.Random
-import ga.Chromosoma
-import ga.OrderedArrayBuffer
 
 abstract class Population {
   var chromosomas = new OrderedArrayBuffer[Chromosoma]
@@ -39,4 +37,6 @@ abstract class Population {
   def show(chromosoma: Chromosoma) = {
     println(step + ". " + chromosoma)
   }
+  
+  def done = show(best)
 }

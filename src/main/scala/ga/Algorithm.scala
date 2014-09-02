@@ -67,7 +67,7 @@ class Algorithm(val size: Int, val length: Int, val count: Int, val population: 
     case Show => population.show(population.chromosomas.head)
 
     case Exit =>
-      population.show(population.best)
+      population.done
       context.stop(self)
   }
 }

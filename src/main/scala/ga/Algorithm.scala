@@ -24,10 +24,10 @@ case class Change(chromosomas: OrderedArrayBuffer[Chromosoma])
 class Algorithm(val size: Int, val length: Int, val count: Int, val population: Population) extends Actor {
   val random = new Random
 
-  // Create the 'crossMaker' actor
+  // Create the 'collector' actor
   val collector = context.actorOf(Props(new Collector(size)), "collector")
 
-  // Create the 'evaluator' actor
+  // Create the 'generator' actor
   val generator = context.actorOf(Props(new Generator(population)).withRouter(FromConfig), "generator")
 
   def getDRandom(N: Int): Int = {

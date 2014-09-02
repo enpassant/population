@@ -14,8 +14,6 @@ import akka.actor.actorRef2Scala
  */
 class Generator(val population: Population) extends Actor {
 
-  val collector = context.actorFor("../../collector")
-
   val random = new Random
   
   def crossChromosoma(chrom1: Chromosoma, chrom2: Chromosoma): Chromosoma = {
@@ -36,14 +34,14 @@ class Generator(val population: Population) extends Actor {
   }
   
   def receive = {
-    case Generate(length) => 
-      collector ! population.evaluate( population.createChromosoma(length) )
+    case Generate(collector, length) => 
+      collector ! Add(sender, population.evaluate( population.createChromosoma(length) ) )
 
-    case Cross(chrom1, chrom2) => 
+    case Cross(collector, chrom1, chrom2) => 
       if (random.nextDouble <= population.pReplicate) {
-    	collector ! chrom1
+    	collector ! Add(sender, chrom1)
       } else {
-    	collector ! population.evaluate( crossChromosoma(chrom1, chrom2) )
+    	collector ! Add(sender, population.evaluate( crossChromosoma(chrom1, chrom2) ) )
       }
   }
 }

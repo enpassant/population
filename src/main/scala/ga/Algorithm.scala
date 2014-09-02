@@ -9,9 +9,11 @@ import akka.actor.Props
 import akka.actor.actorRef2Scala
 import akka.routing.FromConfig
 import akka.actor.ActorSystem
+import akka.actor.ActorRef
 
-case class Generate(length: Int)
-case class Cross(chr1: Chromosoma, chr2: Chromosoma)
+case class Generate(collector: ActorRef, length: Int)
+case class Cross(collector: ActorRef, chr1: Chromosoma, chr2: Chromosoma)
+case class Add(algorithm: ActorRef, chromosoma: Chromosoma)
 case class Exit
 case class Show
 case class Run
@@ -37,7 +39,7 @@ class Algorithm(val size: Int, val length: Int, val count: Int, val population: 
   def init = {
     collector ! Run
     for (i <- 1 to size) {
-      generator ! Generate(length)
+      generator ! Generate(collector, length)
     }
   }
   
@@ -46,7 +48,7 @@ class Algorithm(val size: Int, val length: Int, val count: Int, val population: 
     for (j <- 1 to size) {
       val chrom1 = population.chromosomas(getDRandom(population.chromosomas.length))
       val chrom2 = population.chromosomas(getDRandom(population.chromosomas.length))
-      generator ! Cross(chrom1, chrom2)
+      generator ! Cross(collector, chrom1, chrom2)
     }
   }
   

@@ -24,21 +24,34 @@ case class Change(chromosomas: OrderedArrayBuffer[Chromosoma])
  *
  */
 class Algorithm(val size: Int, val length: Int, val count: Int, val population: Population) extends Actor {
+  import akka.actor.OneForOneStrategy
+  import akka.actor.SupervisorStrategy._
+  import scala.concurrent.duration._
+
   val random = new Random
 
   // Create the 'collector' actor
   val collector = context.actorOf(Props(new Collector(size)), "collector")
 
   // Create the 'generator' actor
-  val generator = context.actorOf(Props(new Generator(population)).withRouter(FromConfig), "generator")
+//  val generator = context.actorOf(Props(new Generator(population)).withRouter(FromConfig), "generator")
 
   def getDRandom(N: Int): Int = {
     ((Math.pow(random.nextDouble / 2 + 0.5, 2) - 0.25) * N - 0.001).toInt
+  }
+ 
+  override val supervisorStrategy =
+  	OneForOneStrategy(maxNrOfRetries = -1, withinTimeRange = 10 minute) {
+//  		case _: ArithmeticException => Escalate
+  		case _: NullPointerException => Restart
+//  		case _: IllegalArgumentException => Stop
+  		case _: Exception => Resume
   }
 
   def init = {
     collector ! Run
     for (i <- 1 to size) {
+      val generator = context.actorOf(Props(new Generator(population)))
       generator ! Generate(collector, length)
     }
   }
@@ -48,6 +61,7 @@ class Algorithm(val size: Int, val length: Int, val count: Int, val population: 
     for (j <- 1 to size) {
       val chrom1 = population.chromosomas(getDRandom(population.chromosomas.length))
       val chrom2 = population.chromosomas(getDRandom(population.chromosomas.length))
+      val generator = context.actorOf(Props(new Generator(population)))
       generator ! Cross(collector, chrom1, chrom2)
     }
   }

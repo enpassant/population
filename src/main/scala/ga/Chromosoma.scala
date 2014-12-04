@@ -1,10 +1,6 @@
 package ga
 
-class Chromosoma(val length: Int) extends Ordered[Chromosoma] {
-  val genome = new Array[Int](length)
-  var fitness = 0.0 
-  var user: Any = _
-
+class Chromosoma(val genome: IndexedSeq[Int], val fitness: Double, val user: Any) extends Ordered[Chromosoma] {
   def compare(that: Chromosoma) =
     this.fitness.compare(that.fitness)
 
@@ -12,5 +8,5 @@ class Chromosoma(val length: Int) extends Ordered[Chromosoma] {
 }
 
 object Chromosoma {
-  def apply(length: Int) = new Chromosoma(length)
+  def apply(genome: IndexedSeq[Int], fitness: Double, user: Any) = new Chromosoma(genome, fitness, user)
 }

@@ -152,12 +152,12 @@ object TicTacToe extends Population {
 
     val result1 = loop(BigInt(0), 1, 1, -1, (0, 0, 0))
     val result2 = loop(BigInt(0), 1, 0, -1, (0, 0, 0))
-    chromosoma.fitness = ((result1._1 + result2._1) * 100.0 + (result1._2 + result2._2) * 100.0 + (result1._3 + result2._3) * 0) /
+    val fitness = ((result1._1 + result2._1) * 100.0 + (result1._2 + result2._2) * 100.0 + (result1._3 + result2._3) * 0) /
     	(result1._1 + result2._1 + result1._2 + result2._2 + result1._3 + result2._3)
 
-    chromosoma.user = (result1._1 + result2._1, result1._2 + result2._2, result1._3 + result2._3)
+    val user = (result1._1 + result2._1, result1._2 + result2._2, result1._3 + result2._3)
 
-    chromosoma
+    Chromosoma(chromosoma.genome, fitness, user)
   }
 
   override def exit(chromosomas: OrderedArrayBuffer[Chromosoma]) = chromosomas.head.user match {

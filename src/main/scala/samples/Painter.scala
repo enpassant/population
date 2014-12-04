@@ -60,27 +60,27 @@ object Painter extends Population {
   def evaluate(chromosoma: Chromosoma) = {
     val newImage = createImage(chromosoma)
     
-    chromosoma.fitness = compareImages(newImage)
-    chromosoma
+    Chromosoma(chromosoma.genome, compareImages(newImage), chromosoma.user)
   }
   
   def compareImages(newImage: BufferedImage) = {
-    var diff = 0L;
-    for (i <- 0 until width) {
-      for (j <- 0 until height) {
+    val diff =
+      (for {
+        i <- 0 until width
+        j <- 0 until height
+      } yield {
         val rgb1 = image.getRGB(i, j)
         val rgb2 = newImage.getRGB(i, j)
         val r1 = (rgb1 >> 16) & 0xff
-        val g1 = (rgb1 >>  8) & 0xff
-        val b1 = (rgb1      ) & 0xff
+        val g1 = (rgb1 >> 8) & 0xff
+        val b1 = (rgb1) & 0xff
         val r2 = (rgb2 >> 16) & 0xff
-        val g2 = (rgb2 >>  8) & 0xff
-        val b2 = (rgb2      ) & 0xff
-        diff += Math.abs(r1 - r2) * Math.abs(r1 - r2)
-        diff += Math.abs(g1 - g2) * Math.abs(g1 - g2)
-        diff += Math.abs(b1 - b2) * Math.abs(b1 - b2)
-      }
-    }
+        val g2 = (rgb2 >> 8) & 0xff
+        val b2 = (rgb2) & 0xff
+        Math.abs(r1 - r2) * Math.abs(r1 - r2) +
+          Math.abs(g1 - g2) * Math.abs(g1 - g2) +
+          Math.abs(b1 - b2) * Math.abs(b1 - b2)
+      }).sum
 //    val n = width * height * 3.0
 //    val p = 10000.0 - diff / n / 255.0
     -diff

@@ -27,13 +27,13 @@ object RandomNumbers extends Population {
 	if (random.nextDouble < 0.0001) {
 	  throw new NullPointerException("Error")
 	}
-	
-    var sum = 0
-    for (i <- 0 until chromosoma.length) {
-      val dif = chromosoma.genome(i) - destChrom.genome(i)
-      sum += dif * dif
-    }
-    chromosoma.fitness = -math.sqrt(sum)
-    chromosoma
+
+	val sum = (chromosoma.genome.view.zipWithIndex foldLeft 0) { 
+	  case (acc, (value, index)) =>
+      	val dif = value - destChrom.genome(index)
+      	acc + dif * dif
+	} 
+
+	Chromosoma(chromosoma.genome, -math.sqrt(sum), chromosoma.user)
   }
 }

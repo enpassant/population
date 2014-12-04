@@ -30,8 +30,8 @@ class AlgorithmSpec(_system: ActorSystem) extends TestKit(_system)
   "Collector actor" should "be able to change algorithm's chromosomas" in {
     val collector = TestActorRef(Props(new Collector(2)))
     collector ! Run
-    collector ! Add(self, new Chromosoma(5))
-    collector ! Add(self, new Chromosoma(5))
+    collector ! Add(self, Chromosoma(IndexedSeq(5), 0.0, None))
+    collector ! Add(self, Chromosoma(IndexedSeq(5), 0.0, None))
     expectMsgPF() {
       case Change(chromosomas) => true
     }

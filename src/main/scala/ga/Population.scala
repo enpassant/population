@@ -14,9 +14,10 @@ abstract class Population {
   
   def createChromosoma(length: Int): Chromosoma = {
     val random = new Random
-    val chromosoma = new Chromosoma(length)
-    for (i <- 0 until length) chromosoma.genome(i) = generateRandomGenome(i, random)
-    chromosoma
+    val genome = (0 until length).map {
+      i => generateRandomGenome(i, random)
+    } 
+    Chromosoma(genome, 0.0, None)
   }
   
   def generateRandomGenome(index: Int, random: Random): Int
@@ -25,7 +26,7 @@ abstract class Population {
   
   def pMutate = 0.001
   
-  def pCrossOver = 0.9
+  def pCrossOver = 0.3
   
   def exit(chromosomas: OrderedArrayBuffer[Chromosoma]) = false
   

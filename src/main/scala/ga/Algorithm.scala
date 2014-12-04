@@ -56,11 +56,11 @@ class Algorithm(val size: Int, val length: Int, val count: Int, val population: 
     }
   }
   
-  def makeStep = {
+  def makeStep(chromosomas: OrderedArrayBuffer[Chromosoma]) = {
     collector ! Run
     for (j <- 1 to size) {
-      val chrom1 = population.chromosomas(getDRandom(population.chromosomas.length))
-      val chrom2 = population.chromosomas(getDRandom(population.chromosomas.length))
+      val chrom1 = chromosomas(getDRandom(chromosomas.length))
+      val chrom2 = chromosomas(getDRandom(chromosomas.length))
       val generator = context.actorOf(Props(new Generator(population)))
       generator ! Cross(collector, chrom1, chrom2)
     }
@@ -68,22 +68,26 @@ class Algorithm(val size: Int, val length: Int, val count: Int, val population: 
   
   init
 
-  def receive = {
+  def receive = active(1, null, new OrderedArrayBuffer[Chromosoma])
+  
+  def active(step: Int, best: Chromosoma, chromosomas: OrderedArrayBuffer[Chromosoma]): Receive = {
 
     case Change(chromosomas) =>
-      population.chromosomas = chromosomas
-      population.step += 1
-      if (population.best == null || population.chromosomas.head.fitness > population.best.fitness) {
-        population.best = population.chromosomas.head
-      }
-      population.show(population.chromosomas.head)
-      if (population.exit || population.step >= count) self ! Exit
-      else makeStep
+      population.show(step, chromosomas.head, chromosomas)
+      
+      if (population.exit(chromosomas) || step >= count) self ! Exit
+      else makeStep(chromosomas)
 
-    case Show => population.show(population.chromosomas.head)
+      context become active(step + 1,
+    	  if (best == null || chromosomas.head.fitness > best.fitness) {
+    		chromosomas.head
+    	  } else best,
+          chromosomas)
+
+    case Show => population.show(step, best, chromosomas)
 
     case Exit =>
-      population.done
+      population.show(step, best, chromosomas)
       context.stop(self)
   }
 }

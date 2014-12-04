@@ -9,6 +9,7 @@ import scala.collection.mutable.Map
 import ga.Population
 import ga.Chromosoma
 import scala.math.BigInt.int2bigInt
+import ga.OrderedArrayBuffer
 
 /**
  * @author kalman
@@ -159,13 +160,13 @@ object TicTacToe extends Population {
     chromosoma
   }
 
-  override def exit = chromosomas.head.user match {
+  override def exit(chromosomas: OrderedArrayBuffer[Chromosoma]) = chromosomas.head.user match {
     case (win, draw, lost) => lost == 0
     case _ => false
   }
 
-  override def show(chromosoma: Chromosoma) = {
-    println(step + ". " + chromosoma.fitness + ", " + chromosomas.last.fitness + " [" + chromosoma.user + "]")
+  override def show(step: Int, best: Chromosoma, chromosomas: OrderedArrayBuffer[Chromosoma]) = {
+    println(step + ". " + best.fitness + ", " + chromosomas.last.fitness + " [" + best.user + "]")
   }
 
   val mapTableToReduced = Map[Int, Int]()

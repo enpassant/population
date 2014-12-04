@@ -12,6 +12,7 @@ import java.awt.GraphicsEnvironment
 import java.awt.Transparency
 import java.awt.image.BufferedImage
 import java.awt.Color
+import ga.OrderedArrayBuffer
 
 /**
  * @author kalman
@@ -59,7 +60,6 @@ object Painter extends Population {
   def evaluate(chromosoma: Chromosoma) = {
     val newImage = createImage(chromosoma)
     
-    var sum = 0
     chromosoma.fitness = compareImages(newImage)
     chromosoma
   }
@@ -86,14 +86,14 @@ object Painter extends Population {
     -diff
   }
   
-  override def done = {
+  override def done(step: Int, best: Chromosoma, chromosomas: OrderedArrayBuffer[Chromosoma]) = {
     val newImage = createImage(best)
     val outputfile = new File("resource/image/saved.png");
     ImageIO.write(newImage, "png", outputfile);
   }
 
-  override def show(chromosoma: Chromosoma) = {
-    if (step % 10 == 0) done
-    println(step + ". " + chromosoma.fitness + ", " + chromosomas.last.fitness)
+  override def show(step: Int, best: Chromosoma, chromosomas: OrderedArrayBuffer[Chromosoma]) = {
+    if (step % 10 == 0) done(step, best, chromosomas)
+    println(step + ". " + best.fitness + ", " + chromosomas.last.fitness)
   }
 }

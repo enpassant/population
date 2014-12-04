@@ -10,11 +10,6 @@ package ga
 import scala.util.Random
 
 abstract class Population {
-  var chromosomas = new OrderedArrayBuffer[Chromosoma]
-  var step = 0;
-  
-  var best: Chromosoma = _
-
   def evaluate(chromosoma: Chromosoma): Chromosoma
   
   def createChromosoma(length: Int): Chromosoma = {
@@ -32,11 +27,11 @@ abstract class Population {
   
   def pCrossOver = 0.9
   
-  def exit = false
+  def exit(chromosomas: OrderedArrayBuffer[Chromosoma]) = false
   
-  def show(chromosoma: Chromosoma) = {
-    println(step + ". " + chromosoma)
+  def show(step: Int, best: Chromosoma, chromosomas: OrderedArrayBuffer[Chromosoma]) = {
+    println(step + ". " + best)
   }
-  
-  def done = show(best)
+
+  def done(step: Int, best: Chromosoma, chromosomas: OrderedArrayBuffer[Chromosoma]) = show(step, best, chromosomas)
 }

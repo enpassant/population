@@ -25,7 +25,7 @@ class Generator(val population: Population) extends Actor {
   }
   
   def crossChromosoma(chrom1: Chromosoma, chrom2: Chromosoma): Chromosoma = {
-    var chromDest = new Chromosoma(chrom1.length)
+    val chromDest = new Chromosoma(chrom1.length)
     var chrom = chrom1
     for (i <- 0 until chrom1.length) {
       if (random.nextDouble <= population.pMutate) {

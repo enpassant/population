@@ -15,14 +15,14 @@ import akka.actor.ReceiveTimeout
  */
 class Collector(val size: Int) extends Actor {
 
-  var chromosomas: OrderedArrayBuffer[Chromosoma] = null
-  
   context.setReceiveTimeout(5 seconds)
 
-  def receive = {
+  def receive = active(new OrderedArrayBuffer[Chromosoma])
+    
+  def active(chromosomas: OrderedArrayBuffer[Chromosoma]): Receive = {
 
     case Run =>
-      chromosomas = new OrderedArrayBuffer[Chromosoma]
+      context become active(new OrderedArrayBuffer[Chromosoma])
 
     case Add(algorithm: ActorRef, chromosoma: Chromosoma) =>
       chromosomas.add(chromosoma)

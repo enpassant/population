@@ -27,25 +27,7 @@ class AlgorithmSpec(_system: ActorSystem) extends TestKit(_system)
     system.awaitTermination(10.seconds)
   }
 
-  "Collector actor" should "not run" in {
-    val collector = TestActorRef(Props(new Collector(2)))
-    collector.underlyingActor.asInstanceOf[Collector].chromosomas should be(null)
-  }
-  
-  it should "be able to run" in {
-    val collector = TestActorRef(Props(new Collector(2)))
-    collector ! Run
-    collector.underlyingActor.asInstanceOf[Collector].chromosomas should not be(null)
-  }
-  
-  it should "be able to add chromosoma" in {
-    val collector = TestActorRef(Props(new Collector(2)))
-    collector ! Run
-    collector ! Add(self, new Chromosoma(5))
-    collector.underlyingActor.asInstanceOf[Collector].chromosomas.length should be(1)
-  }
-  
-  it should "be able to change algorithm's chromosomas" in {
+  "Collector actor" should "be able to change algorithm's chromosomas" in {
     val collector = TestActorRef(Props(new Collector(2)))
     collector ! Run
     collector ! Add(self, new Chromosoma(5))

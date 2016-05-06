@@ -18,7 +18,7 @@ class Collector(val size: Int) extends Actor {
   context.setReceiveTimeout(5 seconds)
 
   def receive = active(new OrderedArrayBuffer[Chromosoma])
-    
+
   def active(chromosomas: OrderedArrayBuffer[Chromosoma]): Receive = {
 
     case Run =>
@@ -29,7 +29,7 @@ class Collector(val size: Int) extends Actor {
       if (chromosomas.length >= size) {
         algorithm ! Change(chromosomas)
       }
-    
+
     case ReceiveTimeout ⇒ context.actorSelection("..") ! Change(chromosomas)
   }
 }

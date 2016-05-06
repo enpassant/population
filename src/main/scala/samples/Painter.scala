@@ -22,7 +22,7 @@ object Painter extends Population {
 
   val count = 50
   val itemCount = 8
-  
+
   val graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment
   val graphicsDevice = graphicsEnvironment.getDefaultScreenDevice
   val graphicsConfiguration = graphicsDevice.getDefaultConfiguration
@@ -30,7 +30,7 @@ object Painter extends Population {
   val image = ImageIO.read(new File("resource/image/wife.jpg"))
   val width = image.getWidth
   val height = image.getHeight
-  
+
   override def generateRandomGenome(index: Int, random: Random) = index match {
     case 0 => random.nextInt(width)
     case 1 => random.nextInt(height)
@@ -42,27 +42,27 @@ object Painter extends Population {
   def createImage(chromosoma: Chromosoma) = {
     val newImage = graphicsConfiguration.createCompatibleImage(width, height, Transparency.BITMASK);
     val graphics = newImage.createGraphics
-    
+
     for (i <- 0 until count) {
       val start = i * itemCount
-      val color = new Color(chromosoma.genome(start + 4), chromosoma.genome(start + 5), 
+      val color = new Color(chromosoma.genome(start + 4), chromosoma.genome(start + 5),
           chromosoma.genome(start + 6), chromosoma.genome(start + 7))
       graphics.setColor(color);
-      graphics.fillOval(chromosoma.genome(start + 0), chromosoma.genome(start + 1), 
+      graphics.fillOval(chromosoma.genome(start + 0), chromosoma.genome(start + 1),
           chromosoma.genome(start + 2), chromosoma.genome(start + 3))
     }
-    
+
     graphics.dispose
-    
+
     newImage
   }
-  
+
   def evaluate(chromosoma: Chromosoma) = {
     val newImage = createImage(chromosoma)
-    
+
     Chromosoma(chromosoma.genome, compareImages(newImage), chromosoma.user)
   }
-  
+
   def compareImages(newImage: BufferedImage) = {
     val diff =
       (for {
@@ -85,7 +85,7 @@ object Painter extends Population {
 //    val p = 10000.0 - diff / n / 255.0
     -diff
   }
-  
+
   override def done(step: Int, best: Chromosoma, chromosomas: OrderedArrayBuffer[Chromosoma]) = {
     val newImage = createImage(best)
     val outputfile = new File("resource/image/saved.png");

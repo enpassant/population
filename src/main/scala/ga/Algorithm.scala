@@ -39,7 +39,7 @@ class Algorithm(val size: Int, val length: Int, val count: Int, val population: 
   def getDRandom(N: Int): Int = {
     ((Math.pow(random.nextDouble / 2 + 0.5, 2) - 0.25) * N - 0.001).toInt
   }
- 
+
   override val supervisorStrategy =
   	OneForOneStrategy(maxNrOfRetries = -1, withinTimeRange = 10 minute) {
 //  		case _: ArithmeticException => Escalate
@@ -55,7 +55,7 @@ class Algorithm(val size: Int, val length: Int, val count: Int, val population: 
       generator ! Generate(collector, length)
     }
   }
-  
+
   def makeStep(chromosomas: OrderedArrayBuffer[Chromosoma]) = {
     collector ! Run
     for (j <- 1 to size) {
@@ -65,16 +65,16 @@ class Algorithm(val size: Int, val length: Int, val count: Int, val population: 
       generator ! Cross(collector, chrom1, chrom2)
     }
   }
-  
+
   init
 
   def receive = active(1, null, new OrderedArrayBuffer[Chromosoma])
-  
+
   def active(step: Int, best: Chromosoma, chromosomas: OrderedArrayBuffer[Chromosoma]): Receive = {
 
     case Change(chromosomas) =>
       population.show(step, chromosomas.head, chromosomas)
-      
+
       if (population.exit(chromosomas) || step >= count) self ! Exit
       else makeStep(chromosomas)
 

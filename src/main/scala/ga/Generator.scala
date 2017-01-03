@@ -37,7 +37,6 @@ class Generator(val population: Population) extends Actor {
         } else acc._2
 
         val value = if (random.nextDouble <= population.pMutate) {
-          // Mutation
           population.generateRandomGenome(index, random)
         } else {
           chrom.genome(index)
@@ -55,12 +54,13 @@ class Generator(val population: Population) extends Actor {
 
     case Cross(collector, chrom1, chrom2) =>
       if (random.nextDouble <= population.pReplicate) {
-    	collector ! Add(sender, chrom1)
-    	context.stop(self)
+				collector ! Add(sender, chrom1)
+				context.stop(self)
       } else {
-    	collector ! Add(sender, population.evaluate(
-          crossChromosoma(chrom1, chrom2) ) )
-    	context.stop(self)
+				collector ! Add(sender, population.evaluate(
+					crossChromosoma(chrom1, chrom2) )
+				)
+				context.stop(self)
       }
   }
 }

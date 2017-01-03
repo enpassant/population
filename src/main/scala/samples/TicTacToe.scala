@@ -22,19 +22,23 @@ object TicTacToe extends Population {
   }
 
   override def pCrossOver = 0.15
+	val winPositions = List(
+		List(0, 1, 2),
+		List(3, 4, 5),
+		List(6, 7, 8),
+		List(0, 3, 6),
+		List(1, 4, 7),
+		List(2, 5, 8),
+		List(0, 4, 8),
+		List(2, 4, 6)
+	)
 
   def isWin(arr: Array[Char], ch: Char) = {
-    (arr(0) == ch && arr(1) == ch && arr(2) == ch) ||
-      (arr(3) == ch && arr(4) == ch && arr(5) == ch) ||
-      (arr(6) == ch && arr(7) == ch && arr(8) == ch) ||
-      (arr(0) == ch && arr(3) == ch && arr(6) == ch) ||
-      (arr(1) == ch && arr(4) == ch && arr(7) == ch) ||
-      (arr(2) == ch && arr(5) == ch && arr(8) == ch) ||
-      (arr(0) == ch && arr(4) == ch && arr(8) == ch) ||
-      (arr(2) == ch && arr(4) == ch && arr(6) == ch)
+		winPositions.exists(pos => pos.forall(idx => arr(idx) == ch))
   }
 
-  def table2String(table: BigInt) = ("000000000" + table.toString(3)).takeRight(9)
+  def table2String(table: BigInt) =
+		("000000000" + table.toString(3)).takeRight(9)
 
   def string2Table(tableStr: String) = BigInt(tableStr, 3)
 
@@ -69,18 +73,21 @@ object TicTacToe extends Population {
     println("___")
   }
 
-  def moveToPos(tableIndex: BigInt, step: Int, pos: Int, show: Boolean): (BigInt, (Int, Int, Int)) = {
+  def moveToPos(tableIndex: BigInt, step: Int, pos: Int, show: Boolean):
+		(BigInt, (Int, Int, Int)) =
+	{
     val moveChar = ("" + (step % 2 + 1))(0)
 
-    val (table, transformIndex) = if (mapTableToReduced.contains(tableIndex.intValue)) {
-      val reducedIndex = mapTableToReduced(tableIndex.intValue)
-      val reduced = reducedTables(reducedIndex)
+    val (table, transformIndex) =
+			if (mapTableToReduced.contains(tableIndex.intValue)) {
+				val reducedIndex = mapTableToReduced(tableIndex.intValue)
+				val reduced = reducedTables(reducedIndex)
 
-      (BigInt( getReduced(reduced) ),
+				(BigInt( getReduced(reduced) ),
           reduced.indexOf(tableIndex.intValue))
-    } else {
-      (tableIndex, 0)
-    }
+			} else {
+				(tableIndex, 0)
+			}
     val strTable = table2String(table)
 
     val strArr = move(strTable, moveChar, pos)
@@ -91,21 +98,28 @@ object TicTacToe extends Population {
     } else (newTable, (0, 1, 0))
   }
 
-  def moveChromosoma(tableIndex: BigInt, step: Int, chrom: Chromosoma, show: Boolean): (BigInt, (Int, Int, Int)) = {
+  def moveChromosoma(
+		tableIndex: BigInt,
+		step: Int,
+		chrom: Chromosoma,
+		show: Boolean):
+	(BigInt, (Int, Int, Int)) =
+	{
     val moveChar = ("" + (step % 2 + 1))(0)
 
-    val (table, transformIndex, pos) = if (mapTableToReduced.contains(tableIndex.intValue)) {
-      val reducedIndex = mapTableToReduced(tableIndex.intValue)
-      val reduced = reducedTables(reducedIndex)
-      val genome = chrom.genome(reducedIndex)
+    val (table, transformIndex, pos) =
+			if (mapTableToReduced.contains(tableIndex.intValue)) {
+				val reducedIndex = mapTableToReduced(tableIndex.intValue)
+				val reduced = reducedTables(reducedIndex)
+				val genome = chrom.genome(reducedIndex)
 
-      (BigInt( getReduced(reduced) ),
+				(BigInt( getReduced(reduced) ),
           reduced.indexOf(tableIndex.intValue),
           reducedMoves(reducedIndex)(genome))
-    } else {
-      (tableIndex, 0, 0)
-    }
-    val strTable = table2String(table)
+			} else {
+				(tableIndex, 0, 0)
+			}
+		val strTable = table2String(table)
 
     val strArr = move(strTable, moveChar, pos)
     val newTable = string2Table(transform(strArr, transformIndex))
@@ -116,27 +130,36 @@ object TicTacToe extends Population {
   }
 
   def evaluate(chromosoma: Chromosoma) = {
-
-    def loop(table: BigInt, step: Int, player: Int, move: Int, sum: (Int, Int, Int)): (Int, Int, Int) = {
+    def loop(
+			table: BigInt,
+			step: Int,
+			player: Int,
+			move: Int,
+			sum: (Int, Int, Int)):
+		(Int, Int, Int) =
+		{
       if (step > 9) {
         (sum._1, sum._2 + 1, sum._3)
       } else {
         val (tableIndex, (win, draw, lost)) = if (move >= 0) {
-	      val (tableIndex, (win, draw, lost)) = moveToPos(table, step, move, false)
+					val (tableIndex, (win, draw, lost)) =
+						moveToPos(table, step, move, false)
 
-	      if (player == 1) (tableIndex, (win, draw, lost))
-	      else (tableIndex, (lost, draw, win))
+					if (player == 1) (tableIndex, (win, draw, lost))
+					else (tableIndex, (lost, draw, win))
         } else if (step % 2 == player) {
-          val (tableIndex, (win, draw, lost)) = moveChromosoma(table, step, chromosoma, false)
+          val (tableIndex, (win, draw, lost)) =
+						moveChromosoma(table, step, chromosoma, false)
 
           if (player == 1) (tableIndex, (win, draw, lost))
-	      else (tableIndex, (lost, draw, win))
+					else (tableIndex, (lost, draw, win))
         } else {
           if (mapTableToReduced.contains(table.intValue)) {
             val reducedIndex = mapTableToReduced(table.intValue)
             val reduced = getReduced(reducedTables(reducedIndex))
             val moves = reducedMoves(reducedIndex)
-            (null, moves.foldLeft( (0, 0, 0) )((point, pos) => loop(reduced, step, player, pos, point)))
+							(null, moves.foldLeft( (0, 0, 0) )(
+								(point, pos) => loop(reduced, step, player, pos, point)))
           } else {
             (null, loop(table, step, player, 0, (0, 0, 0)))
           }
@@ -152,21 +175,41 @@ object TicTacToe extends Population {
 
     val result1 = loop(BigInt(0), 1, 1, -1, (0, 0, 0))
     val result2 = loop(BigInt(0), 1, 0, -1, (0, 0, 0))
-    val fitness = ((result1._1 + result2._1) * 100.0 + (result1._2 + result2._2) * 100.0 + (result1._3 + result2._3) * 0) /
-    	(result1._1 + result2._1 + result1._2 + result2._2 + result1._3 + result2._3)
+    val fitness = (
+			(result1._1 + result2._1) * 100.0 +
+			(result1._2 + result2._2) * 100.0 +
+			(result1._3 + result2._3) * 0
+		) /
+		(
+			result1._1 + result2._1 +
+			result1._2 + result2._2 +
+			result1._3 + result2._3
+		)
 
-    val user = (result1._1 + result2._1, result1._2 + result2._2, result1._3 + result2._3)
+    val user = (
+			result1._1 + result2._1,
+			result1._2 + result2._2,
+			result1._3 + result2._3)
 
     Chromosoma(chromosoma.genome, fitness, user)
   }
 
-  override def exit(chromosomas: OrderedArrayBuffer[Chromosoma]) = chromosomas.head.user match {
-    case (win, draw, lost) => lost == 0
-    case _ => false
-  }
+  override def exit(chromosomas: OrderedArrayBuffer[Chromosoma]) =
+		chromosomas.head.user match {
+	    case (win, draw, lost) => lost == 0
+		  case _ => false
+		}
 
-  override def show(step: Int, best: Chromosoma, chromosomas: OrderedArrayBuffer[Chromosoma]) = {
-    println(step + ". " + best.fitness + ", " + chromosomas.last.fitness + " [" + best.user + "]")
+  override def show(
+		step: Int,
+		best: Chromosoma,
+		chromosomas: OrderedArrayBuffer[Chromosoma]) =
+	{
+    println(
+			step + ". " +
+			best.fitness + ", " +
+			chromosomas.last.fitness +
+			" [" + best.user + "]")
   }
 
   val mapTableToReduced = Map[Int, Int]()
@@ -190,13 +233,17 @@ object TicTacToe extends Population {
   }
 
   private def getReduced(transformedTables: Seq[Int]) = {
-    transformedTables.foldLeft(20000)((min, reduced) => if (reduced < min) reduced else min)
+    transformedTables.foldLeft(20000)(
+			(min, reduced) => if (reduced < min) reduced else min
+		)
   }
 
   def init = {
     for (i <- 0 until 19683) {
       val strTable = table2String(BigInt(i))
-      val transformedTables = (0 until transforms.length).map(tr => string2Table(transform(strTable, tr)).intValue)
+      val transformedTables = (0 until transforms.length).map(
+				tr => string2Table(transform(strTable, tr)).intValue
+			)
       val reduced = getReduced(transformedTables)
       if (reduced == i) {
         val emptyCounts = countChar(strTable, '0')
@@ -207,7 +254,12 @@ object TicTacToe extends Population {
         val isWinO = isWin(charArray, '1')
         val isWinX = isWin(charArray, '2')
 
-        if (emptyCounts > 1 && !isWinO && !isWinX && (xCounts == oCounts || xCounts == oCounts + 1)) {
+        if (
+					emptyCounts > 1 &&
+					!isWinO &&
+					!isWinX &&
+					(xCounts == oCounts || xCounts == oCounts + 1))
+				{
           reducedEmptyCounts.append(emptyCounts)
 
           reducedTables.append(transformedTables.toList)

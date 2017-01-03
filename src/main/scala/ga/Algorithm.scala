@@ -23,18 +23,20 @@ case class Change(chromosomas: OrderedArrayBuffer[Chromosoma])
  * @author kalman
  *
  */
-class Algorithm(val size: Int, val length: Int, val count: Int, val population: Population) extends Actor {
+class Algorithm(
+	val size: Int,
+	val length: Int,
+	val count: Int,
+	val population: Population)
+extends Actor {
   import akka.actor.OneForOneStrategy
   import akka.actor.SupervisorStrategy._
   import scala.concurrent.duration._
 
   val random = new Random
 
-  // Create the 'collector' actor
   val collector = context.actorOf(Props(new Collector(size)), "collector")
 
-  // Create the 'generator' actor
-//  val generator = context.actorOf(Props(new Generator(population)).withRouter(FromConfig), "generator")
 
   def getDRandom(N: Int): Int = {
     ((Math.pow(random.nextDouble / 2 + 0.5, 2) - 0.25) * N - 0.001).toInt
@@ -70,19 +72,25 @@ class Algorithm(val size: Int, val length: Int, val count: Int, val population: 
 
   def receive = active(1, null, new OrderedArrayBuffer[Chromosoma])
 
-  def active(step: Int, best: Chromosoma, chromosomas: OrderedArrayBuffer[Chromosoma]): Receive = {
-
+  def active(
+		step: Int,
+		best: Chromosoma,
+		chromosomas: OrderedArrayBuffer[Chromosoma]): Receive =
+	{
     case Change(chromosomas) =>
       population.show(step, chromosomas.head, chromosomas)
 
       if (population.exit(chromosomas) || step >= count) self ! Exit
       else makeStep(chromosomas)
 
-      context become active(step + 1,
-    	  if (best == null || chromosomas.head.fitness > best.fitness) {
-    		chromosomas.head
-    	  } else best,
-          chromosomas)
+			val newBest = if (best == null
+				|| chromosomas.head.fitness > best.fitness)
+			{
+				chromosomas.head
+			} else {
+				best
+			}
+      context become active(step + 1, newBest, chromosomas)
 
     case Show => population.show(step, best, chromosomas)
 
